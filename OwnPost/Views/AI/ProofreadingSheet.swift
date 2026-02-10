@@ -11,29 +11,23 @@ struct ProofreadingSheet: View {
         NavigationStack {
             Group {
                 if isLoading {
-                    VStack(spacing: 16) {
+                    ContentUnavailableView {
                         ProgressView()
+                    } description: {
                         Text("Proofreading with on-device AI...")
-                            .foregroundStyle(.secondary)
                     }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else if let error {
-                    VStack(spacing: 16) {
-                        Image(systemName: "exclamationmark.triangle")
-                            .font(.largeTitle)
-                            .foregroundStyle(.orange)
+                    ContentUnavailableView {
+                        Label("Error", systemImage: "exclamationmark.triangle")
+                    } description: {
                         Text(error)
-                            .multilineTextAlignment(.center)
                     }
-                    .padding()
                 } else if suggestions.isEmpty {
-                    VStack(spacing: 16) {
-                        Image(systemName: "checkmark.circle")
-                            .font(.largeTitle)
-                            .foregroundStyle(.green)
+                    ContentUnavailableView {
+                        Label("All Clear", systemImage: "checkmark.circle")
+                    } description: {
                         Text("No suggestions — your writing looks good!")
                     }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else {
                     List {
                         ForEach(suggestions) { suggestion in
@@ -55,9 +49,6 @@ struct ProofreadingSheet: View {
         .task {
             await runProofreading()
         }
-        #if os(macOS)
-        .frame(minWidth: 500, minHeight: 400)
-        #endif
     }
 
     private func runProofreading() async {
@@ -65,9 +56,7 @@ struct ProofreadingSheet: View {
         defer { isLoading = false }
 
         do {
-            let llm = OnDeviceLLMService()
-            try await llm.initialize()
-            let service = ProofreadingService(llm: llm)
+            let service = try ProofreadingService()
             suggestions = try await service.proofread(markdown: note.body)
         } catch {
             self.error = error.localizedDescription

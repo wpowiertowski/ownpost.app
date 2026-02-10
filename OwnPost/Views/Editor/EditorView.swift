@@ -5,6 +5,7 @@ struct EditorView: View {
     @State private var showPreview = false
     @State private var showPublishSheet = false
     @State private var showProofreading = false
+    @State private var editorView = MarkdownEditorView(text: .constant(""))
 
     var body: some View {
         Group {
@@ -15,12 +16,12 @@ struct EditorView: View {
             }
         }
         .navigationTitle($note.title)
-        #if os(macOS)
         .navigationSubtitle(note.modifiedAt.formatted(.relative(presentation: .named)))
-        #endif
         .toolbar {
             EditorToolbar(
                 showPreview: $showPreview,
+                onBold: { editorView.toggleBold() },
+                onItalic: { editorView.toggleItalic() },
                 onProofread: { showProofreading = true },
                 onPublish: { showPublishSheet = true }
             )

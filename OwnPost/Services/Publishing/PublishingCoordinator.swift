@@ -1,6 +1,8 @@
 import Foundation
 import Observation
 
+/// Orchestrates the full POSSE flow: publish to Ghost first (canonical), then syndicate.
+/// MainActor-isolated by default (Swift 6.2) since it drives UI state.
 @Observable
 final class PublishingCoordinator {
     enum PublishState: Sendable {
@@ -46,11 +48,10 @@ final class PublishingCoordinator {
             state = .publishingToGhost
             do {
                 let ghostPost = try await ghostService.publishPost(note: note)
-                await MainActor.run {
-                    note.ghostPostID = ghostPost.id
-                    note.ghostURL = ghostPost.url
-                    noteStore.save()
-                }
+                // Already on MainActor — safe to mutate model objects directly
+                note.ghostPostID = ghostPost.id
+                note.ghostURL = ghostPost.url
+                noteStore.save()
                 results.append(.success(.ghost, ghostPost.url))
             } catch {
                 state = .failed(error)
@@ -63,10 +64,8 @@ final class PublishingCoordinator {
             state = .syndicatingToMastodon
             do {
                 let status = try await mastodonService.syndicate(note: note)
-                await MainActor.run {
-                    note.mastodonStatusID = status.id
-                    noteStore.save()
-                }
+                note.mastodonStatusID = status.id
+                noteStore.save()
                 results.append(.success(.mastodon, status.url))
             } catch {
                 results.append(.failure(.mastodon, error))
@@ -78,10 +77,8 @@ final class PublishingCoordinator {
             state = .syndicatingToBluesky
             do {
                 let post = try await blueskyService.syndicate(note: note)
-                await MainActor.run {
-                    note.blueskyURI = post.uri
-                    noteStore.save()
-                }
+                note.blueskyURI = post.uri
+                noteStore.save()
                 results.append(.success(.bluesky, post.uri))
             } catch {
                 results.append(.failure(.bluesky, error))

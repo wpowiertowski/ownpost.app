@@ -3,7 +3,6 @@ import SwiftUI
 struct AltTextSheet: View {
     @Bindable var attachment: ImageAttachment
     @Environment(\.dismiss) private var dismiss
-    @State private var generatedText = ""
     @State private var isGenerating = false
     @State private var error: String?
 
@@ -11,21 +10,12 @@ struct AltTextSheet: View {
         NavigationStack {
             Form {
                 Section("Image") {
-                    #if os(iOS)
-                    if let uiImage = UIImage(data: attachment.imageData) {
-                        Image(uiImage: uiImage)
+                    if let image = platformImage(from: attachment.imageData) {
+                        image
                             .resizable()
                             .scaledToFit()
                             .frame(maxHeight: 200)
                     }
-                    #elseif os(macOS)
-                    if let nsImage = NSImage(data: attachment.imageData) {
-                        Image(nsImage: nsImage)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(maxHeight: 200)
-                    }
-                    #endif
                 }
 
                 Section("Alt Text") {
@@ -59,9 +49,7 @@ struct AltTextSheet: View {
                     Button("Cancel") { dismiss() }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Save") {
-                        dismiss()
-                    }
+                    Button("Save") { dismiss() }
                 }
                 ToolbarItem(placement: .primaryAction) {
                     Button("Generate") {
@@ -71,9 +59,6 @@ struct AltTextSheet: View {
                 }
             }
         }
-        #if os(macOS)
-        .frame(minWidth: 400, minHeight: 400)
-        #endif
     }
 
     private func generateAltText() async {
@@ -82,12 +67,23 @@ struct AltTextSheet: View {
         defer { isGenerating = false }
 
         do {
-            let service = AltTextService()
-            try await service.initialize()
-            let text = try await service.generateAltText(for: attachment.imageData)
+            let service = try AltTextService()
+            let text = try await service.generateAltText(
+                for: attachment.filename
+            )
             attachment.altText = text
         } catch {
             self.error = error.localizedDescription
         }
+    }
+
+    private func platformImage(from data: Data) -> Image? {
+        #if os(iOS)
+        guard let uiImage = UIImage(data: data) else { return nil }
+        return Image(uiImage: uiImage)
+        #elseif os(macOS)
+        guard let nsImage = NSImage(data: data) else { return nil }
+        return Image(nsImage: nsImage)
+        #endif
     }
 }

@@ -2,11 +2,15 @@ import SwiftUI
 
 struct EditorToolbar: ToolbarContent {
     @Binding var showPreview: Bool
+    let onBold: () -> Void
+    let onItalic: () -> Void
     let onProofread: () -> Void
     let onPublish: () -> Void
 
     var body: some ToolbarContent {
         ToolbarItemGroup(placement: .primaryAction) {
+            ToolbarSpacer(.fixed)
+
             Button {
                 showPreview.toggle()
             } label: {
@@ -16,6 +20,16 @@ struct EditorToolbar: ToolbarContent {
                 )
             }
             .keyboardShortcut("p", modifiers: [.command, .shift])
+
+            ToolbarSpacer(.flexible)
+
+            Button("Bold", systemImage: "bold", action: onBold)
+                .keyboardShortcut("b", modifiers: .command)
+
+            Button("Italic", systemImage: "italic", action: onItalic)
+                .keyboardShortcut("i", modifiers: .command)
+
+            ToolbarSpacer(.flexible)
 
             Menu {
                 Button("Proofread", systemImage: "text.magnifyingglass", action: onProofread)
