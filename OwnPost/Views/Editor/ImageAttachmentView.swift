@@ -5,7 +5,6 @@ struct ImageAttachmentView: View {
     @Bindable var note: Note
     @Environment(\.modelContext) private var modelContext
     @State private var selectedItem: PhotosPickerItem?
-    @State private var showAltTextSheet = false
     @State private var selectedAttachment: ImageAttachment?
 
     var body: some View {
@@ -41,25 +40,14 @@ struct ImageAttachmentView: View {
     @ViewBuilder
     private func imageCard(for attachment: ImageAttachment) -> some View {
         VStack {
-            #if os(iOS)
-            if let uiImage = UIImage(data: attachment.imageData) {
-                Image(uiImage: uiImage)
+            if let image = platformImage(from: attachment.imageData) {
+                image
                     .resizable()
                     .scaledToFill()
                     .frame(width: 120, height: 80)
                     .clipped()
-                    .cornerRadius(8)
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
             }
-            #elseif os(macOS)
-            if let nsImage = NSImage(data: attachment.imageData) {
-                Image(nsImage: nsImage)
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: 120, height: 80)
-                    .clipped()
-                    .cornerRadius(8)
-            }
-            #endif
 
             Text(attachment.altText ?? "No alt text")
                 .font(.caption)
@@ -90,8 +78,16 @@ struct ImageAttachmentView: View {
         )
         modelContext.insert(attachment)
         note.imageAttachments.append(attachment)
-
-        // Insert markdown reference at end of note body
         note.body += "\n\n\(attachment.markdownReference)"
+    }
+
+    private func platformImage(from data: Data) -> Image? {
+        #if os(iOS)
+        guard let uiImage = UIImage(data: data) else { return nil }
+        return Image(uiImage: uiImage)
+        #elseif os(macOS)
+        guard let nsImage = NSImage(data: data) else { return nil }
+        return Image(nsImage: nsImage)
+        #endif
     }
 }

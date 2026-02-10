@@ -1,12 +1,12 @@
-// swift-tools-version: 6.0
+// swift-tools-version: 6.2
 
 import PackageDescription
 
 let package = Package(
     name: "OwnPost",
     platforms: [
-        .iOS(.v18),
-        .macOS(.v15)
+        .iOS(.v26),
+        .macOS(.v26)
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-markdown.git", from: "0.5.0"),
@@ -17,7 +17,10 @@ let package = Package(
             dependencies: [
                 .product(name: "Markdown", package: "swift-markdown"),
             ],
-            path: "OwnPost"
+            path: "OwnPost",
+            swiftSettings: [
+                .defaultIsolation(MainActor.self)
+            ]
         ),
     ]
 )

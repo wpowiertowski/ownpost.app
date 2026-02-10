@@ -1,44 +1,32 @@
 import Foundation
 import FoundationModels
 
+/// Structured alt text output via guided generation.
+@Generable
+struct AltTextResult {
+    @Guide(description: "Concise image description for alt text, under 125 characters")
+    var altText: String
+}
+
 actor AltTextService {
-    private var session: LanguageModelSession?
+    private let session: LanguageModelSession
 
-    enum AltTextError: Error, LocalizedError {
-        case modelUnavailable
-        case generationFailed
-
-        var errorDescription: String? {
-            switch self {
-            case .modelUnavailable: "On-device AI model is not available for alt text generation"
-            case .generationFailed: "Failed to generate alt text for the image"
-            }
-        }
-    }
-
-    var isAvailable: Bool {
-        SystemLanguageModel.default.isAvailable
-    }
-
-    func initialize() throws {
+    init() throws {
         guard SystemLanguageModel.default.isAvailable else {
-            throw AltTextError.modelUnavailable
+            throw OnDeviceLLMService.AIError.modelUnavailable
         }
-        self.session = LanguageModelSession()
+        self.session = LanguageModelSession(instructions: """
+            You generate concise, descriptive alt text for images used in blog posts. \
+            Keep descriptions under 125 characters. Focus on what the image depicts, \
+            not how it looks stylistically.
+            """)
     }
 
-    func generateAltText(for imageData: Data) async throws -> String {
-        guard let session else {
-            throw AltTextError.modelUnavailable
-        }
-
-        let prompt = """
-        Describe this image concisely for use as alt text in a blog post. \
-        Be descriptive but keep it under 125 characters.
-        """
-
-        // Foundation Models supports multimodal input on capable devices
-        let response = try await session.respond(to: prompt)
-        return response.content
+    @concurrent func generateAltText(for context: String) async throws -> String {
+        let result: AltTextResult = try await session.respond(
+            to: "Generate alt text for an image described as: \(context)",
+            generating: AltTextResult.self
+        )
+        return result.altText
     }
 }
