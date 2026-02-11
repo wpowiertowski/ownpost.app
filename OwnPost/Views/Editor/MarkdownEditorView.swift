@@ -11,7 +11,15 @@ struct MarkdownEditorView: View {
     var body: some View {
         TextEditor(text: $attributedText, selection: $selection)
             .font(.system(.body, design: .monospaced))
-            .padding()
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+            #if os(macOS)
+            // NSTextView inside TextEditor has a built-in leading inset; compensate to align with title.
+            .padding(.leading, -4)
+            #endif
+            #if os(iOS)
+            .scrollContentBackground(.hidden)
+            .background(Color(uiColor: .systemBackground))
+            #endif
             .onAppear {
                 attributedText = AttributedString(text)
             }

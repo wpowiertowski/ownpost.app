@@ -3,6 +3,7 @@ import Observation
 import FoundationModels
 
 /// Global app state — MainActor-isolated by default in Swift 6.2.
+@MainActor
 @Observable
 final class AppState {
     var selectedNote: Note?

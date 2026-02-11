@@ -31,6 +31,8 @@ playground.xcworkspace
 
 .build/
 .build-ios/
+.swiftpm/
+OwnPost.xcodeproj/
 
 # CocoaPods
 #
