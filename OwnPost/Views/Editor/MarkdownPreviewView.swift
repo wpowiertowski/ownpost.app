@@ -25,15 +25,17 @@ struct MarkdownPreviewView: View {
               padding: 0;
               background: transparent;
               color: -apple-system-label;
-              font: -apple-system-body;
-              line-height: 1.5;
+              font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
+              font-size: 14px;
+              line-height: 1.52;
             }
             h1, h2, h3, h4, h5, h6 {
-              margin: 0.8em 0 0.4em;
+              margin: 0.95em 0 0.45em;
               line-height: 1.25;
             }
-            p { margin: 0.5em 0; }
-            ul, ol { margin: 0.5em 0 0.5em 1.3em; }
+            p { margin: 0.6em 0; }
+            ul, ol { margin: 0.6em 0 0.6em 1.35em; }
+            li { margin: 0.22em 0; }
             blockquote {
               margin: 0.8em 0;
               padding-left: 0.8em;
@@ -64,10 +66,14 @@ private struct MarkdownWebView: UIViewRepresentable {
     let html: String
 
     func makeUIView(context: Context) -> WKWebView {
-        let webView = WKWebView(frame: .zero)
+        let config = WKWebViewConfiguration()
+        config.websiteDataStore = .nonPersistent()
+        config.mediaTypesRequiringUserActionForPlayback = .all
+        let webView = WKWebView(frame: .zero, configuration: config)
         webView.isOpaque = false
         webView.backgroundColor = .clear
         webView.scrollView.backgroundColor = .clear
+        webView.allowsLinkPreview = false
         return webView
     }
 
@@ -80,7 +86,10 @@ private struct MarkdownWebView: NSViewRepresentable {
     let html: String
 
     func makeNSView(context: Context) -> WKWebView {
-        let webView = WKWebView(frame: .zero)
+        let config = WKWebViewConfiguration()
+        config.websiteDataStore = .nonPersistent()
+        config.mediaTypesRequiringUserActionForPlayback = .all
+        let webView = WKWebView(frame: .zero, configuration: config)
         webView.setValue(false, forKey: "drawsBackground")
         return webView
     }

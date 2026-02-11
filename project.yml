@@ -39,7 +39,6 @@ targets:
     settings:
       base:
         INFOPLIST_FILE: OwnPost/Info.plist
-        CODE_SIGN_ENTITLEMENTS: OwnPost/OwnPost.entitlements
         PRODUCT_BUNDLE_IDENTIFIER: app.ownpost
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
@@ -48,10 +47,10 @@ targets:
         Debug:
           SWIFT_OPTIMIZATION_LEVEL: -Onone
           SWIFT_ACTIVE_COMPILATION_CONDITIONS: DEBUG
+          CODE_SIGN_ENTITLEMENTS: OwnPost/OwnPost.Debug.entitlements
         Release:
           SWIFT_OPTIMIZATION_LEVEL: -O
+          CODE_SIGN_ENTITLEMENTS: OwnPost/OwnPost.entitlements
     dependencies:
       - package: swift-markdown
         product: Markdown
-    entitlements:
-      path: OwnPost/OwnPost.entitlements
