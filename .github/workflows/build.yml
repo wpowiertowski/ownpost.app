@@ -1,0 +1,44 @@
+name: Build
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Build (${{ matrix.platform }})
+    runs-on: macos-26
+    strategy:
+      fail-fast: false
+      matrix:
+        platform:
+          - iOS
+          - macOS
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Show Xcode version
+        run: xcodebuild -version
+
+      - name: Verify Xcode 26+
+        shell: bash
+        run: |
+          set -euo pipefail
+          XCODE_MAJOR="$(xcodebuild -version | awk '/Xcode/ { split($2, parts, "."); print parts[1] }')"
+          if [[ "${XCODE_MAJOR}" -lt 26 ]]; then
+            echo "Xcode 26+ is required to build iOS 26/macOS 26 targets. Found Xcode ${XCODE_MAJOR}."
+            exit 1
+          fi
+
+      - name: Build ${{ matrix.platform }} target
+        run: |
+          xcodebuild \
+            -scheme OwnPost \
+            -destination "generic/platform=${{ matrix.platform }}" \
+            -configuration Debug \
+            CODE_SIGNING_ALLOWED=NO \
+            build
