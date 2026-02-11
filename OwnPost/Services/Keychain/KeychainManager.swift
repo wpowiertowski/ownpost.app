@@ -82,7 +82,7 @@ actor KeychainManager {
 
     // MARK: - Codable Convenience
 
-    func save<T: Codable>(key: String, value: T) throws {
+    func save<T: Encodable>(key: String, value: T) throws {
         let data = try JSONEncoder().encode(value)
         try save(key: key, data: data)
     }

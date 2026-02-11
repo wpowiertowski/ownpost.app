@@ -91,7 +91,7 @@ actor GhostAuthManager {
 // MARK: - Data Hex & Base64URL Extensions
 
 private extension Data {
-    init?(hexString: String) {
+    nonisolated init?(hexString: String) {
         let len = hexString.count / 2
         var data = Data(capacity: len)
         var index = hexString.startIndex
@@ -106,7 +106,7 @@ private extension Data {
         self = data
     }
 
-    func base64URLEncoded() -> String {
+    nonisolated func base64URLEncoded() -> String {
         base64EncodedString()
             .replacingOccurrences(of: "+", with: "-")
             .replacingOccurrences(of: "/", with: "_")

@@ -42,15 +42,35 @@ final class PublishingCoordinator {
     /// Full POSSE publish flow
     func publish(note: Note, options: PublishOptions) async {
         var results: [SyndicationResult] = []
+        var snapshot = PublishableNote(
+            title: note.title,
+            body: note.body,
+            tags: note.tags,
+            ghostURL: note.ghostURL,
+            imageAttachments: note.imageAttachments.map { attachment in
+                PublishableNote.Image(
+                    filename: attachment.filename,
+                    imageData: attachment.imageData,
+                    altText: attachment.altText
+                )
+            }
+        )
 
         // Step 1: Publish to Ghost (canonical URL)
         if options.publishToGhost {
             state = .publishingToGhost
             do {
-                let ghostPost = try await ghostService.publishPost(note: note)
+                let ghostPost = try await ghostService.publishPost(note: snapshot)
                 // Already on MainActor — safe to mutate model objects directly
                 note.ghostPostID = ghostPost.id
                 note.ghostURL = ghostPost.url
+                snapshot = PublishableNote(
+                    title: snapshot.title,
+                    body: snapshot.body,
+                    tags: snapshot.tags,
+                    ghostURL: ghostPost.url,
+                    imageAttachments: snapshot.imageAttachments
+                )
                 noteStore.save()
                 results.append(.success(.ghost, ghostPost.url))
             } catch {
@@ -63,7 +83,7 @@ final class PublishingCoordinator {
         if options.syndicateToMastodon {
             state = .syndicatingToMastodon
             do {
-                let status = try await mastodonService.syndicate(note: note)
+                let status = try await mastodonService.syndicate(note: snapshot)
                 note.mastodonStatusID = status.id
                 noteStore.save()
                 results.append(.success(.mastodon, status.url))
@@ -76,7 +96,7 @@ final class PublishingCoordinator {
         if options.syndicateToBluesky {
             state = .syndicatingToBluesky
             do {
-                let post = try await blueskyService.syndicate(note: note)
+                let post = try await blueskyService.syndicate(note: snapshot)
                 note.blueskyURI = post.uri
                 noteStore.save()
                 results.append(.success(.bluesky, post.uri))

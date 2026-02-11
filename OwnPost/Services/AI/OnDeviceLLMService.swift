@@ -43,14 +43,15 @@ actor OnDeviceLLMService {
         prompt: String,
         generating type: T.Type
     ) async throws -> T {
-        try await session.respond(to: prompt, generating: type)
+        let response = try await session.respond(to: prompt, generating: type)
+        return response.content
     }
 
     /// Stream a structured response, yielding partial snapshots
-    @concurrent func stream<T: Generable>(
+    func stream<T: Generable>(
         prompt: String,
         generating type: T.Type
-    ) -> some AsyncSequence<T.PartiallyGenerated, any Error> {
+    ) -> LanguageModelSession.ResponseStream<T> {
         session.streamResponse(to: prompt, generating: type)
     }
 }
