@@ -30,6 +30,13 @@ let package = Package(
                 .defaultIsolation(MainActor.self)
             ]
         ),
+        .testTarget(
+            name: "OwnPostTests",
+            dependencies: [
+                "OwnPost",
+            ],
+            path: "Tests"
+        ),
     ]
 )
 
