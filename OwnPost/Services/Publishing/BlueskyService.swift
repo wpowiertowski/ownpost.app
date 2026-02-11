@@ -56,7 +56,7 @@ actor BlueskyService {
     }
 
     /// Create a post on Bluesky linking back to Ghost (POSSE)
-    func syndicate(note: Note) async throws -> BlueskyPost {
+    func syndicate(note: PublishableNote) async throws -> BlueskyPost {
         let token = try await auth.getAccessToken()
         let did = try await auth.getDID()
 
@@ -160,7 +160,6 @@ actor BlueskyService {
     func buildLinkFacets(text: String, url: String?) -> [BlueskyFacet] {
         guard let url, !url.isEmpty else { return [] }
 
-        let textData = text.data(using: .utf8)!
         guard let range = text.range(of: url) else { return [] }
 
         let byteStart = text[text.startIndex..<range.lowerBound].data(using: .utf8)!.count

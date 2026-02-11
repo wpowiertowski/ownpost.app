@@ -15,7 +15,7 @@ actor MastodonService {
     }
 
     /// Post a status linking back to the Ghost canonical URL (POSSE)
-    func syndicate(note: Note) async throws -> MastodonStatus {
+    func syndicate(note: PublishableNote) async throws -> MastodonStatus {
         let token = try await auth.getAccessToken()
         let instanceURL = try await auth.getInstanceURL()
 

@@ -23,10 +23,10 @@ actor AltTextService {
     }
 
     @concurrent func generateAltText(for context: String) async throws -> String {
-        let result: AltTextResult = try await session.respond(
+        let response = try await session.respond(
             to: "Generate alt text for an image described as: \(context)",
             generating: AltTextResult.self
         )
-        return result.altText
+        return response.content.altText
     }
 }

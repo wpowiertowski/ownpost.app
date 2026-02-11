@@ -9,7 +9,7 @@ let package = Package(
         .macOS(.v26)
     ],
     dependencies: [
-        .package(url: "https://github.com/apple/swift-markdown.git", from: "0.5.0"),
+        .package(url: "https://github.com/apple/swift-markdown.git", from: "0.7.3"),
     ],
     targets: [
         .executableTarget(
@@ -18,6 +18,14 @@ let package = Package(
                 .product(name: "Markdown", package: "swift-markdown"),
             ],
             path: "OwnPost",
+            exclude: [
+                "Info.plist",
+                "OwnPost.entitlements"
+            ],
+            resources: [
+                .process("Resources/Assets.xcassets"),
+                .process("Resources/Localizable.xcstrings")
+            ],
             swiftSettings: [
                 .defaultIsolation(MainActor.self)
             ]

@@ -41,7 +41,7 @@ actor GhostService {
     }
 
     /// Publish a note as a Ghost post
-    func publishPost(note: Note, status: GhostPostStatus = .published) async throws -> GhostPost {
+    func publishPost(note: PublishableNote, status: GhostPostStatus = .published) async throws -> GhostPost {
         let token = try await auth.generateToken()
         let baseURL = try await auth.getAPIURL()
         let html = MarkdownExporter.toHTML(note.body)
@@ -105,7 +105,7 @@ actor GhostService {
     }
 
     /// Update an existing post
-    func updatePost(ghostID: String, note: Note) async throws -> GhostPost {
+    func updatePost(ghostID: String, note: PublishableNote) async throws -> GhostPost {
         let token = try await auth.generateToken()
         let baseURL = try await auth.getAPIURL()
         let html = MarkdownExporter.toHTML(note.body)

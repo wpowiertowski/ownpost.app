@@ -3,14 +3,14 @@ import Markdown
 
 struct MarkdownExporter {
     /// Convert markdown to HTML for Ghost publishing
-    static func toHTML(_ markdown: String) -> String {
+    nonisolated static func toHTML(_ markdown: String) -> String {
         let document = Document(parsing: markdown)
         var htmlVisitor = HTMLFormatter()
         return htmlVisitor.visit(document)
     }
 
     /// Extract a plain text excerpt for social media syndication
-    static func excerpt(_ markdown: String, maxLength: Int = 280) -> String {
+    nonisolated static func excerpt(_ markdown: String, maxLength: Int = 280) -> String {
         let plain = markdown
             .replacingOccurrences(
                 of: #"[#*_`\[\]()!>]"#,
@@ -35,7 +35,7 @@ struct MarkdownExporter {
 private struct HTMLFormatter: MarkupWalker {
     private var html = ""
 
-    mutating func visit(_ document: Document) -> String {
+    nonisolated mutating func visit(_ document: Document) -> String {
         html = ""
         for child in document.children {
             visit(child)
@@ -43,7 +43,7 @@ private struct HTMLFormatter: MarkupWalker {
         return html
     }
 
-    mutating func visitHeading(_ heading: Heading) {
+    nonisolated mutating func visitHeading(_ heading: Heading) {
         let level = heading.level
         html += "<h\(level)>"
         for child in heading.children {
@@ -52,7 +52,7 @@ private struct HTMLFormatter: MarkupWalker {
         html += "</h\(level)>\n"
     }
 
-    mutating func visitParagraph(_ paragraph: Paragraph) {
+    nonisolated mutating func visitParagraph(_ paragraph: Paragraph) {
         html += "<p>"
         for child in paragraph.children {
             visit(child)
@@ -60,11 +60,11 @@ private struct HTMLFormatter: MarkupWalker {
         html += "</p>\n"
     }
 
-    mutating func visitText(_ text: Markdown.Text) {
+    nonisolated mutating func visitText(_ text: Markdown.Text) {
         html += escapeHTML(text.string)
     }
 
-    mutating func visitEmphasis(_ emphasis: Emphasis) {
+    nonisolated mutating func visitEmphasis(_ emphasis: Emphasis) {
         html += "<em>"
         for child in emphasis.children {
             visit(child)
@@ -72,7 +72,7 @@ private struct HTMLFormatter: MarkupWalker {
         html += "</em>"
     }
 
-    mutating func visitStrong(_ strong: Strong) {
+    nonisolated mutating func visitStrong(_ strong: Strong) {
         html += "<strong>"
         for child in strong.children {
             visit(child)
@@ -80,7 +80,7 @@ private struct HTMLFormatter: MarkupWalker {
         html += "</strong>"
     }
 
-    mutating func visitLink(_ link: Markdown.Link) {
+    nonisolated mutating func visitLink(_ link: Markdown.Link) {
         html += "<a href=\"\(link.destination ?? "")\">"
         for child in link.children {
             visit(child)
@@ -88,13 +88,13 @@ private struct HTMLFormatter: MarkupWalker {
         html += "</a>"
     }
 
-    mutating func visitImage(_ image: Markdown.Image) {
+    nonisolated mutating func visitImage(_ image: Markdown.Image) {
         let alt = image.plainText
         let src = image.source ?? ""
         html += "<img src=\"\(src)\" alt=\"\(escapeHTML(alt))\" />"
     }
 
-    mutating func visitCodeBlock(_ codeBlock: CodeBlock) {
+    nonisolated mutating func visitCodeBlock(_ codeBlock: CodeBlock) {
         let lang = codeBlock.language ?? ""
         if lang.isEmpty {
             html += "<pre><code>"
@@ -105,11 +105,11 @@ private struct HTMLFormatter: MarkupWalker {
         html += "</code></pre>\n"
     }
 
-    mutating func visitInlineCode(_ inlineCode: InlineCode) {
+    nonisolated mutating func visitInlineCode(_ inlineCode: InlineCode) {
         html += "<code>\(escapeHTML(inlineCode.code))</code>"
     }
 
-    mutating func visitBlockQuote(_ blockQuote: BlockQuote) {
+    nonisolated mutating func visitBlockQuote(_ blockQuote: BlockQuote) {
         html += "<blockquote>\n"
         for child in blockQuote.children {
             visit(child)
@@ -117,7 +117,7 @@ private struct HTMLFormatter: MarkupWalker {
         html += "</blockquote>\n"
     }
 
-    mutating func visitUnorderedList(_ unorderedList: UnorderedList) {
+    nonisolated mutating func visitUnorderedList(_ unorderedList: UnorderedList) {
         html += "<ul>\n"
         for child in unorderedList.children {
             visit(child)
@@ -125,7 +125,7 @@ private struct HTMLFormatter: MarkupWalker {
         html += "</ul>\n"
     }
 
-    mutating func visitOrderedList(_ orderedList: OrderedList) {
+    nonisolated mutating func visitOrderedList(_ orderedList: OrderedList) {
         html += "<ol>\n"
         for child in orderedList.children {
             visit(child)
@@ -133,7 +133,7 @@ private struct HTMLFormatter: MarkupWalker {
         html += "</ol>\n"
     }
 
-    mutating func visitListItem(_ listItem: ListItem) {
+    nonisolated mutating func visitListItem(_ listItem: ListItem) {
         html += "<li>"
         for child in listItem.children {
             visit(child)
@@ -141,19 +141,19 @@ private struct HTMLFormatter: MarkupWalker {
         html += "</li>\n"
     }
 
-    mutating func visitThematicBreak(_ thematicBreak: ThematicBreak) {
+    nonisolated mutating func visitThematicBreak(_ thematicBreak: ThematicBreak) {
         html += "<hr />\n"
     }
 
-    mutating func visitSoftBreak(_ softBreak: SoftBreak) {
+    nonisolated mutating func visitSoftBreak(_ softBreak: SoftBreak) {
         html += "\n"
     }
 
-    mutating func visitLineBreak(_ lineBreak: LineBreak) {
+    nonisolated mutating func visitLineBreak(_ lineBreak: LineBreak) {
         html += "<br />\n"
     }
 
-    private func escapeHTML(_ string: String) -> String {
+    private nonisolated func escapeHTML(_ string: String) -> String {
         string
             .replacingOccurrences(of: "&", with: "&amp;")
             .replacingOccurrences(of: "<", with: "&lt;")
@@ -161,7 +161,7 @@ private struct HTMLFormatter: MarkupWalker {
             .replacingOccurrences(of: "\"", with: "&quot;")
     }
 
-    private mutating func visit(_ markup: any Markup) {
+    nonisolated mutating func visit(_ markup: any Markup) {
         if let heading = markup as? Heading {
             visitHeading(heading)
         } else if let paragraph = markup as? Paragraph {

@@ -41,12 +41,12 @@ actor ProofreadingService {
 
     /// Proofread using guided generation with @Generable for reliable structured output
     @concurrent func proofread(markdown: String) async throws -> [Suggestion] {
-        let result: ProofreadingResult = try await session.respond(
+        let response = try await session.respond(
             to: "Proofread the following markdown:\n\n\(markdown)",
             generating: ProofreadingResult.self
         )
 
-        return result.suggestions.map { item in
+        return response.content.suggestions.map { item in
             Suggestion(
                 originalText: item.original,
                 suggestedText: item.suggested,
@@ -56,9 +56,9 @@ actor ProofreadingService {
     }
 
     /// Stream proofreading results as they are generated
-    @concurrent func streamProofread(
+    func streamProofread(
         markdown: String
-    ) -> some AsyncSequence<ProofreadingResult.PartiallyGenerated, any Error> {
+    ) -> LanguageModelSession.ResponseStream<ProofreadingResult> {
         session.streamResponse(
             to: "Proofread the following markdown:\n\n\(markdown)",
             generating: ProofreadingResult.self
