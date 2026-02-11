@@ -9,11 +9,14 @@ struct ContentView: View {
         NavigationSplitView(columnVisibility: $columnVisibility) {
             NoteListView(selectedNote: $selectedNote)
         } detail: {
-            if let note = selectedNote {
-                EditorView(note: note)
-            } else {
-                EmptyStateView(message: "Select or create a note")
+            Group {
+                if let note = selectedNote {
+                    EditorView(note: note)
+                } else {
+                    EmptyStateView(message: "Select or create a note")
+                }
             }
+            .navigationTitle("")
         }
     }
 }
