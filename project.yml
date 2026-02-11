@@ -54,3 +54,10 @@ targets:
     dependencies:
       - package: swift-markdown
         product: Markdown
+  OwnPostTests:
+    type: bundle.unit-test
+    platform: [macOS]
+    sources:
+      - path: Tests
+    dependencies:
+      - target: OwnPost
