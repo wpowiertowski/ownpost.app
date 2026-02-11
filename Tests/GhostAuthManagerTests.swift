@@ -39,7 +39,10 @@ struct GhostAuthManagerTests {
             )
             Issue.record("Expected GhostAuthError.invalidKey")
         } catch let error as GhostAuthManager.GhostAuthError {
-            #expect(error == .invalidKey)
+            guard case .invalidKey = error else {
+                Issue.record("Expected .invalidKey, got \(error)")
+                return
+            }
         } catch {
             Issue.record("Unexpected error type: \(error)")
         }
@@ -54,7 +57,10 @@ struct GhostAuthManagerTests {
             )
             Issue.record("Expected GhostAuthError.invalidKey")
         } catch let error as GhostAuthManager.GhostAuthError {
-            #expect(error == .invalidKey)
+            guard case .invalidKey = error else {
+                Issue.record("Expected .invalidKey, got \(error)")
+                return
+            }
         } catch {
             Issue.record("Unexpected error type: \(error)")
         }
