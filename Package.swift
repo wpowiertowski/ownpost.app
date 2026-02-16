@@ -20,7 +20,8 @@ let package = Package(
             path: "OwnPost",
             exclude: [
                 "Info.plist",
-                "OwnPost.entitlements"
+                "OwnPost.entitlements",
+                "OwnPost.Debug.entitlements"
             ],
             resources: [
                 .process("Resources/Assets.xcassets"),
