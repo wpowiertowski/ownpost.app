@@ -7,17 +7,19 @@ struct ContentView: View {
 
     var body: some View {
         NavigationSplitView(columnVisibility: $columnVisibility) {
-            NoteListView(selectedNote: $selectedNote)
+            NoteListView(selectedNote: $selectedNote, columnVisibility: $columnVisibility)
+                .navigationSplitViewColumnWidth(min: 260, ideal: 300, max: 400)
+                #if os(iOS)
+                .navigationBarTitleDisplayMode(.large)
+                #endif
         } detail: {
-            Group {
-                if let note = selectedNote {
-                    EditorView(note: note)
-                } else {
-                    EmptyStateView(message: "Select or create a note")
-                }
+            if let note = selectedNote {
+                EditorView(note: note)
+            } else {
+                EmptyStateView(message: "Select or create a note")
             }
-            .navigationTitle("")
         }
+        .navigationSplitViewStyle(.balanced)
     }
 }
 

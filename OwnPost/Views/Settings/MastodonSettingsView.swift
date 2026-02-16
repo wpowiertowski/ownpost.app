@@ -12,6 +12,7 @@ struct MastodonSettingsView: View {
         Form {
             Section {
                 TextField("Instance URL", text: $instanceURL, prompt: Text("https://mastodon.social"))
+                    .font(Constants.Design.monoBody)
                     #if os(iOS)
                     .keyboardType(.URL)
                     .textInputAutocapitalization(.never)
@@ -19,25 +20,30 @@ struct MastodonSettingsView: View {
                     .autocorrectionDisabled()
                     .disabled(isConnected)
             } header: {
-                Text("Mastodon Instance")
+                Text("Instance")
+                    .font(Constants.Design.monoCaption)
             } footer: {
                 Text("Enter your Mastodon instance URL to connect via OAuth.")
+                    .font(Constants.Design.monoCaption)
             }
 
             Section {
                 if isConnected {
                     Label("Connected", systemImage: "checkmark.circle.fill")
-                        .foregroundStyle(.green)
+                        .font(Constants.Design.monoBody)
+                        .foregroundStyle(Constants.Design.accentColor)
 
                     Button("Disconnect", role: .destructive) {
                         disconnect()
                     }
+                    .font(Constants.Design.monoBody)
                 } else {
                     Button(action: connect) {
                         if isConnecting {
                             ProgressView()
                         } else {
                             Text("Connect with OAuth")
+                                .font(Constants.Design.monoBody)
                         }
                     }
                     .disabled(instanceURL.isEmpty || isConnecting)
@@ -47,7 +53,8 @@ struct MastodonSettingsView: View {
             if let statusMessage {
                 Section {
                     Label(statusMessage, systemImage: isError ? "xmark.circle" : "checkmark.circle")
-                        .foregroundStyle(isError ? .red : .green)
+                        .font(Constants.Design.monoCaption)
+                        .foregroundStyle(isError ? .red : Constants.Design.accentColor)
                 }
             }
         }

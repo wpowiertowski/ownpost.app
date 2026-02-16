@@ -10,7 +10,7 @@ struct SettingsView: View {
                 }
             MastodonSettingsView()
                 .tabItem {
-                    Label("Mastodon", systemImage: "bubble.left.and.bubble.right")
+                    Label("Mastodon", systemImage: "at")
                 }
             BlueskySettingsView()
                 .tabItem {
@@ -18,13 +18,13 @@ struct SettingsView: View {
                 }
             AISettingsView()
                 .tabItem {
-                    Label("AI", systemImage: "brain")
+                    Label("AI", systemImage: "sparkles")
                 }
         }
-        .frame(width: 450, height: 300)
+        .frame(width: 450, height: 280)
         #else
         NavigationStack {
-            List {
+            Form {
                 Section("Publishing") {
                     NavigationLink {
                         GhostSettingsView()
@@ -34,7 +34,7 @@ struct SettingsView: View {
                     NavigationLink {
                         MastodonSettingsView()
                     } label: {
-                        Label("Mastodon", systemImage: "bubble.left.and.bubble.right")
+                        Label("Mastodon", systemImage: "at")
                     }
                     NavigationLink {
                         BlueskySettingsView()
@@ -47,7 +47,7 @@ struct SettingsView: View {
                     NavigationLink {
                         AISettingsView()
                     } label: {
-                        Label("AI", systemImage: "brain")
+                        Label("AI", systemImage: "sparkles")
                     }
                 }
             }

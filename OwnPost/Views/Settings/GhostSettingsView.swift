@@ -11,6 +11,7 @@ struct GhostSettingsView: View {
         Form {
             Section {
                 TextField("Ghost URL", text: $apiURL, prompt: Text("https://yourblog.ghost.io"))
+                    .font(Constants.Design.monoBody)
                     #if os(iOS)
                     .keyboardType(.URL)
                     .textInputAutocapitalization(.never)
@@ -18,11 +19,14 @@ struct GhostSettingsView: View {
                     .autocorrectionDisabled()
 
                 SecureField("Admin API Key", text: $adminAPIKey, prompt: Text("64-character hex key"))
+                    .font(Constants.Design.monoBody)
                     .autocorrectionDisabled()
             } header: {
-                Text("Ghost Configuration")
+                Text("Configuration")
+                    .font(Constants.Design.monoCaption)
             } footer: {
-                Text("Find your Admin API key in Ghost Admin → Settings → Integrations → Custom Integration.")
+                Text("Find your Admin API key in Ghost Admin → Settings → Integrations.")
+                    .font(Constants.Design.monoCaption)
             }
 
             Section {
@@ -31,6 +35,7 @@ struct GhostSettingsView: View {
                         ProgressView()
                     } else {
                         Text("Save")
+                            .font(Constants.Design.monoBody)
                     }
                 }
                 .disabled(apiURL.isEmpty || adminAPIKey.isEmpty || isSaving)
@@ -39,7 +44,8 @@ struct GhostSettingsView: View {
             if let statusMessage {
                 Section {
                     Label(statusMessage, systemImage: isError ? "xmark.circle" : "checkmark.circle")
-                        .foregroundStyle(isError ? .red : .green)
+                        .font(Constants.Design.monoCaption)
+                        .foregroundStyle(isError ? .red : Constants.Design.accentColor)
                 }
             }
         }

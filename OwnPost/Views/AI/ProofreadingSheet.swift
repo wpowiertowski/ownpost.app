@@ -11,23 +11,33 @@ struct ProofreadingSheet: View {
         NavigationStack {
             Group {
                 if isLoading {
-                    ContentUnavailableView {
+                    VStack(spacing: 16) {
                         ProgressView()
-                    } description: {
-                        Text("Proofreading with on-device AI...")
+                        Text("Proofreading...")
+                            .font(Constants.Design.monoCaption)
+                            .foregroundStyle(.secondary)
                     }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else if let error {
-                    ContentUnavailableView {
-                        Label("Error", systemImage: "exclamationmark.triangle")
-                    } description: {
+                    VStack(spacing: 12) {
+                        Image(systemName: "exclamationmark.triangle")
+                            .font(.largeTitle)
+                            .foregroundStyle(.red)
                         Text(error)
+                            .font(Constants.Design.monoCaption)
+                            .foregroundStyle(.secondary)
                     }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else if suggestions.isEmpty {
-                    ContentUnavailableView {
-                        Label("All Clear", systemImage: "checkmark.circle")
-                    } description: {
+                    VStack(spacing: 12) {
+                        Image(systemName: "checkmark.circle")
+                            .font(.largeTitle)
+                            .foregroundStyle(Constants.Design.accentColor)
                         Text("No suggestions — your writing looks good!")
+                            .font(Constants.Design.monoCaption)
+                            .foregroundStyle(.secondary)
                     }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else {
                     List {
                         ForEach(suggestions) { suggestion in
@@ -43,6 +53,7 @@ struct ProofreadingSheet: View {
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Done") { dismiss() }
+                        .font(Constants.Design.monoBody)
                 }
             }
         }
@@ -79,14 +90,15 @@ private struct SuggestionRowView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(suggestion.explanation)
-                .font(.subheadline)
+                .font(Constants.Design.monoSubheadline)
 
             HStack {
                 VStack(alignment: .leading) {
                     Text("Original")
-                        .font(.caption)
+                        .font(Constants.Design.monoCaption)
                         .foregroundStyle(.secondary)
                     Text(suggestion.originalText)
+                        .font(Constants.Design.monoBody)
                         .strikethrough()
                         .foregroundStyle(.red)
                 }
@@ -95,14 +107,16 @@ private struct SuggestionRowView: View {
 
                 VStack(alignment: .leading) {
                     Text("Suggested")
-                        .font(.caption)
+                        .font(Constants.Design.monoCaption)
                         .foregroundStyle(.secondary)
                     Text(suggestion.suggestedText)
-                        .foregroundStyle(.green)
+                        .font(Constants.Design.monoBody)
+                        .foregroundStyle(Constants.Design.accentColor)
                 }
             }
 
             Button("Accept", action: onAccept)
+                .font(Constants.Design.monoCaption)
                 .buttonStyle(.borderedProminent)
                 .controlSize(.small)
         }
