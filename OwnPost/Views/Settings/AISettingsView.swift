@@ -7,51 +7,36 @@ struct AISettingsView: View {
     var body: some View {
         Form {
             Section {
-                HStack {
-                    Text("On-Device AI")
-                    Spacer()
+                LabeledContent("Status") {
                     if isAvailable {
                         Label("Available", systemImage: "checkmark.circle.fill")
-                            .foregroundStyle(.green)
+                            .font(Constants.Design.monoBody)
+                            .foregroundStyle(Constants.Design.accentColor)
                     } else {
-                        Label("Unavailable", systemImage: "xmark.circle.fill")
+                        Label("Unavailable", systemImage: "xmark.circle")
+                            .font(Constants.Design.monoBody)
                             .foregroundStyle(.secondary)
                     }
                 }
-            } header: {
-                Text("AI Status")
+                .font(Constants.Design.monoBody)
             } footer: {
-                if isAvailable {
-                    Text("On-device AI is available for proofreading and alt text generation. All processing happens locally — your data never leaves the device.")
-                } else {
-                    Text("On-device AI requires Apple Intelligence to be enabled on supported hardware. AI features will be disabled.")
-                }
+                Text(isAvailable
+                    ? "All processing happens locally on your device."
+                    : "Requires Apple Intelligence on supported hardware.")
+                    .font(Constants.Design.monoCaption)
             }
 
-            Section("Features") {
-                Label {
-                    VStack(alignment: .leading) {
-                        Text("Proofreading")
-                        Text("Grammar, spelling, and style suggestions via @Generable guided generation")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
-                } icon: {
-                    Image(systemName: "text.magnifyingglass")
-                }
-                .foregroundStyle(isAvailable ? .primary : .secondary)
+            Section {
+                Label("Proofreading", systemImage: "text.magnifyingglass")
+                    .font(Constants.Design.monoBody)
+                    .foregroundStyle(isAvailable ? .primary : .secondary)
 
-                Label {
-                    VStack(alignment: .leading) {
-                        Text("Alt Text Generation")
-                        Text("Concise image descriptions for accessibility")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
-                } icon: {
-                    Image(systemName: "photo.badge.checkmark")
-                }
-                .foregroundStyle(isAvailable ? .primary : .secondary)
+                Label("Alt Text Generation", systemImage: "photo")
+                    .font(Constants.Design.monoBody)
+                    .foregroundStyle(isAvailable ? .primary : .secondary)
+            } header: {
+                Text("Capabilities")
+                    .font(Constants.Design.monoCaption)
             }
         }
         .navigationTitle("AI")

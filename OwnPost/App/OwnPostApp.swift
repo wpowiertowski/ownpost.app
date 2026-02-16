@@ -21,6 +21,7 @@ struct OwnPostApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .tint(Constants.Design.accentColor)
         }
         .modelContainer(container)
 

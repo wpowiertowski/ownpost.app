@@ -12,6 +12,7 @@ struct BlueskySettingsView: View {
         Form {
             Section {
                 TextField("Handle", text: $handle, prompt: Text("yourname.bsky.social"))
+                    .font(Constants.Design.monoBody)
                     #if os(iOS)
                     .textInputAutocapitalization(.never)
                     #endif
@@ -19,28 +20,34 @@ struct BlueskySettingsView: View {
                     .disabled(isConnected)
 
                 SecureField("App Password", text: $appPassword, prompt: Text("xxxx-xxxx-xxxx-xxxx"))
+                    .font(Constants.Design.monoBody)
                     .autocorrectionDisabled()
                     .disabled(isConnected)
             } header: {
-                Text("Bluesky Account")
+                Text("Account")
+                    .font(Constants.Design.monoCaption)
             } footer: {
-                Text("Use an App Password from bsky.app → Settings → App Passwords. Never use your main password.")
+                Text("Use an App Password from bsky.app → Settings → App Passwords.")
+                    .font(Constants.Design.monoCaption)
             }
 
             Section {
                 if isConnected {
                     Label("Connected", systemImage: "checkmark.circle.fill")
-                        .foregroundStyle(.green)
+                        .font(Constants.Design.monoBody)
+                        .foregroundStyle(Constants.Design.accentColor)
 
                     Button("Disconnect", role: .destructive) {
                         disconnect()
                     }
+                    .font(Constants.Design.monoBody)
                 } else {
                     Button(action: connect) {
                         if isConnecting {
                             ProgressView()
                         } else {
                             Text("Sign In")
+                                .font(Constants.Design.monoBody)
                         }
                     }
                     .disabled(handle.isEmpty || appPassword.isEmpty || isConnecting)
@@ -50,7 +57,8 @@ struct BlueskySettingsView: View {
             if let statusMessage {
                 Section {
                     Label(statusMessage, systemImage: isError ? "xmark.circle" : "checkmark.circle")
-                        .foregroundStyle(isError ? .red : .green)
+                        .font(Constants.Design.monoCaption)
+                        .foregroundStyle(isError ? .red : Constants.Design.accentColor)
                 }
             }
         }

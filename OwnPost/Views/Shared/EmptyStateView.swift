@@ -4,10 +4,17 @@ struct EmptyStateView: View {
     let message: String
 
     var body: some View {
-        ContentUnavailableView {
-            Label("OwnPost", systemImage: "note.text")
-        } description: {
+        VStack(spacing: 16) {
+            Text("OWNPOST")
+                .font(.caption)
+                .fontWeight(.semibold)
+                .tracking(2)
+                .foregroundStyle(Constants.Design.accentColor)
+
             Text(message)
+                .font(Constants.Design.monoHeadline)
+                .foregroundStyle(.secondary)
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }

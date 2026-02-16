@@ -8,6 +8,7 @@ final class Note {
     var body: String
     var createdAt: Date
     var modifiedAt: Date
+    var publishedAt: Date?
     var isPinned: Bool
     var tags: [String]
 
@@ -33,6 +34,7 @@ final class Note {
         body: String = "",
         createdAt: Date = .now,
         modifiedAt: Date = .now,
+        publishedAt: Date? = nil,
         isPinned: Bool = false,
         tags: [String] = [],
         ghostPostID: String? = nil,
@@ -47,6 +49,7 @@ final class Note {
         self.body = body
         self.createdAt = createdAt
         self.modifiedAt = modifiedAt
+        self.publishedAt = publishedAt
         self.isPinned = isPinned
         self.tags = tags
         self.ghostPostID = ghostPostID

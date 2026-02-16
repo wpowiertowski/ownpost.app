@@ -8,7 +8,7 @@ struct EditorToolbar: ToolbarContent {
     let onPublish: () -> Void
 
     var body: some ToolbarContent {
-        ToolbarItemGroup(placement: .primaryAction) {
+        ToolbarItem(placement: .primaryAction) {
             Button {
                 showPreview.toggle()
             } label: {
@@ -18,24 +18,29 @@ struct EditorToolbar: ToolbarContent {
                 )
             }
             .keyboardShortcut("p", modifiers: [.command, .shift])
+        }
 
+        ToolbarSpacer(.fixed)
+
+        ToolbarItemGroup(placement: .primaryAction) {
             Button("Bold", systemImage: "bold", action: onBold)
                 .keyboardShortcut("b", modifiers: .command)
 
             Button("Italic", systemImage: "italic", action: onItalic)
                 .keyboardShortcut("i", modifiers: .command)
+        }
 
+        ToolbarSpacer(.fixed)
+
+        ToolbarItemGroup(placement: .primaryAction) {
             Menu {
                 Button("Proofread", systemImage: "text.magnifyingglass", action: onProofread)
-                Button("Generate Alt Text", systemImage: "photo.badge.checkmark") {
-                    // Handled via ImageAttachmentView
-                }
             } label: {
-                Label("AI", systemImage: "brain")
+                Label("AI", systemImage: "sparkles")
             }
 
             Button(action: onPublish) {
-                Label("Publish", systemImage: "paperplane")
+                Label("Publish", systemImage: "paperplane.fill")
             }
             .keyboardShortcut(.return, modifiers: [.command, .shift])
         }

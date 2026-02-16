@@ -2,66 +2,54 @@ import SwiftUI
 
 struct NoteRowView: View {
     let note: Note
+    var sortOrder: NoteSortOrder = .created
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
-            HStack {
+            HStack(alignment: .center, spacing: 6) {
                 Text(note.title.isEmpty ? "Untitled" : note.title)
-                    .font(.headline)
+                    .font(Constants.Design.monoHeadline)
                     .lineLimit(1)
+
+                StatusBadge(note: note)
 
                 Spacer()
 
                 if note.isPinned {
                     Image(systemName: "pin.fill")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                        .font(.caption2)
+                        .foregroundStyle(.tertiary)
                 }
             }
 
-            HStack {
-                Text(lastUpdatedText)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+            HStack(spacing: 0) {
+                Text(displayDate.formatted(.relative(presentation: .named)))
+                    .font(Constants.Design.monoCaption)
+                    .foregroundStyle(.tertiary)
 
-                Spacer()
+                if !note.body.isEmpty {
+                    Text(" · ")
+                        .font(Constants.Design.monoCaption)
+                        .foregroundStyle(.tertiary)
 
-                StatusBadge(note: note)
-            }
-
-            if !note.body.isEmpty {
-                Text(note.body.prefix(100))
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-                    .lineLimit(2)
+                    Text(note.body.prefix(60))
+                        .font(Constants.Design.monoCaption)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                }
             }
         }
-        .padding(.vertical, 2)
+        .padding(.vertical, 4)
     }
 
-    private var lastUpdatedText: String {
-        let seconds = max(0, Date().timeIntervalSince(note.modifiedAt))
-
-        if seconds < 3600 {
-            let minutes = max(1, Int(seconds / 60))
-            return minutes == 1 ? "1 min ago" : "\(minutes) mins ago"
+    private var displayDate: Date {
+        switch sortOrder {
+        case .modified:
+            return note.modifiedAt
+        case .created:
+            return note.createdAt
+        case .published:
+            return note.publishedAt ?? note.createdAt
         }
-
-        if seconds < 86_400 {
-            let hours = Int(seconds / 3600)
-            return hours == 1 ? "1 hour ago" : "\(hours) hours ago"
-        }
-
-        if seconds < 604_800 {
-            let days = Int(seconds / 86_400)
-            return days == 1 ? "1 day ago" : "\(days) days ago"
-        }
-
-        if seconds < 2_419_200 {
-            let weeks = Int(seconds / 604_800)
-            return weeks == 1 ? "1 week ago" : "\(weeks) weeks ago"
-        }
-
-        return note.modifiedAt.formatted(date: .abbreviated, time: .omitted)
     }
 }
