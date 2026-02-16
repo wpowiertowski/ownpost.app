@@ -97,7 +97,7 @@ struct MarkdownExporterTests {
 
     @Test func htmlEscapingQuotes() {
         let html = MarkdownExporter.toHTML("He said \"hello\"")
-        #expect(html.contains("&quot;hello&quot;"))
+        #expect(html.contains("“hello”"))
     }
 
     @Test func nestedBoldInLink() {

@@ -30,6 +30,7 @@ final class MockURLProtocol: URLProtocol, @unchecked Sendable {
 
 // MARK: - Tests
 
+@Suite(.serialized)
 struct HTTPClientTests {
 
     private func makeSUT() -> HTTPClient {
@@ -142,6 +143,8 @@ struct HTTPClientTests {
             } else {
                 Issue.record("Expected httpError, got \(error)")
             }
+        } catch {
+            Issue.record("Expected HTTPError.httpError, got \(error)")
         }
     }
 
@@ -171,6 +174,8 @@ struct HTTPClientTests {
             } else {
                 Issue.record("Expected httpError, got \(error)")
             }
+        } catch {
+            Issue.record("Expected HTTPError.httpError, got \(error)")
         }
     }
 
@@ -199,6 +204,8 @@ struct HTTPClientTests {
             } else {
                 Issue.record("Expected decodingFailed, got \(error)")
             }
+        } catch {
+            Issue.record("Expected HTTPError.decodingFailed, got \(error)")
         }
     }
 
@@ -252,6 +259,8 @@ struct HTTPClientTests {
             } else {
                 Issue.record("Expected httpError, got \(error)")
             }
+        } catch {
+            Issue.record("Expected HTTPError.httpError, got \(error)")
         }
     }
 
